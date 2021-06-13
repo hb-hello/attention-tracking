@@ -1,0 +1,21 @@
+{% load static  %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>List of Sessions</title>
+        <link rel="stylesheet" href="{% static 'css/materialize.css' %}">
+        <link rel="stylesheet" href="{% static 'css/materialize.min.css' %}">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <style>
+            html {
+                scroll-behavior: smooth;
+            }
+        </style>
+    </head>
+<body>
+    {% for session in sessions_list %}
+        <a href='/sessionanalytics/{{ session.hash_key }}/'><h5>{{ session.class_id }} on {{ session.time_stamp|date }}, {{ session.time_stamp|time }}</h5></a>
+    {% endfor %}
+</body>
+</html>
