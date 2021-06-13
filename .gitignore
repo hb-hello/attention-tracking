@@ -1,0 +1,10 @@
+.idea
+.git
+.ignore
+venv/*
+*.log
+*.pyc
+*/__pycache__/*
+logs/*
+ClassApp/annotated_frames/*.png
+.DS_Store
