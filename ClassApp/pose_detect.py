@@ -10,7 +10,7 @@ import logging
 # protoFile = r"ClassApp\models\pose_deploy_linevec_faster_4_stages.prototxt"
 
 MODELS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'models')
-FRAMES_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pose_annotated_frames')
+# FRAMES_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pose_annotated_frames')
 
 protoFile = os.path.join(MODELS_PATH, r"pose_deploy_linevec.prototxt")
 weightsFile = os.path.join(MODELS_PATH, r"pose_iter_440000.caffemodel")
@@ -311,10 +311,10 @@ def getPoseAttention(image1, frame_counter):
 
         attn += multiplication_factor
 
-    formatted_time = time.strftime('%b%d-%H-%M', time.localtime(time.time()))
-    image_file = os.path.join(FRAMES_PATH, f'frame_{formatted_time}_{frame_counter}.png')
-    annotated_frame = cv2.putText(frameClone, f'Pose Attention: {str((attn/(len(personwise_data)+0.1))*100)}', (10,15), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255,0,0), 1)
-    cv2.imwrite(image_file, annotated_frame)
+    # formatted_time = time.strftime('%b%d-%H-%M', time.localtime(time.time()))
+    # image_file = os.path.join(FRAMES_PATH, f'frame_{formatted_time}_{frame_counter}.png')
+    # annotated_frame = cv2.putText(frameClone, f'Pose Attention: {str((attn/(len(personwise_data)+0.1))*100)}', (10,15), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255,0,0), 1)
+    # cv2.imwrite(image_file, annotated_frame)
 
     logging.debug("POSE Answer" + str(attn/(len(personwise_data)+1)*100))
     return ((attn/(len(personwise_data)+0.1))*100,n_q,n_b,n_p,unattentive_coordinates)
