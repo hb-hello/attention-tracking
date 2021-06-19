@@ -54,6 +54,7 @@
     <div style="display: none">
         <img id="photo">
     </div>
+    <input type="hidden" value="{{ request.session.class_id }}" id="class_id">
     <script type="text/javascript" src="{% static 'js/jquery-3.3.1.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/materialize.js' %}"></script>

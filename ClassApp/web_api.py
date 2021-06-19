@@ -33,7 +33,7 @@ def chart3(request):
         A = []
         temp = ClassAttentionID.objects.filter(class_id=course)
         for hk in temp:
-            timestmps = ClassAttention.objects.filter(hash_key=hk.hash_key)
+            timestmps = ClassAttention.objects.filter(hash_key=hk)
             for tp in timestmps:
                 n += 1
                 A.append(int(float(tp.ov_attn)))
@@ -46,17 +46,30 @@ def chart3(request):
     }
     return JsonResponse(data)
 
-def attention_chart(request, attention_id):
-    query = ClassAttention.objects.filter(teacher_id).order_by('frame_counter')
-    frame_list = []
+def attention_chart(request):
+    attention_id = request.GET.get('id')
+    threshold = 60.0
+    query = ClassAttentionID.objects.get(class_id=attention_id).classattention_set.all().order_by('frame_counter')
+    time_list = []
     attention_list = []
+    data_list = []
+    threshold_list = [0, 0]
     for record in query:
-        frame_list.append(record.frame_counter)
-        attention_list.append(record.ov_attn)
+        time_list.append(record.time_elapsed)
+        attention_list.append(round(float(record.ov_attn), 2))
+        data_list.append({'x': float(record.time_elapsed), 'y': round(float(record.ov_attn), 2)})
+        if(round(float(record.ov_attn), 2) < threshold):
+            threshold_list[0] += 1
+        else:
+            threshold_list[1] += 1
+
+    threshold_list = [(i * 100)/sum(threshold_list) for i in threshold_list]
 
     data = {
-        'frame_no': frame_list,
-        'attantion': attention_list
+        # 'time': time_list,
+        # 'attention': attention_list,
+        'attention_data': data_list,
+        'threshold_list': threshold_list
     }
 
     return JsonResponse(data)
@@ -101,7 +114,7 @@ def chart1(request):
 
     six_sessions = list(ClassAttentionID.objects.filter(session_teacher=request.user))[-2:]
 
-    hash_keys = [x.hash_key for x in six_sessions]
+    hash_keys = [x for x in six_sessions]
 
     six_sessions_data = defaultdict(list)
 
@@ -117,7 +130,7 @@ def chart1(request):
             n_p += int(tmstmp.n_p)
             attention.append(int(float(tmstmp.ov_attn)))
 
-        six_sessions_data["timestamp"].append(ClassAttentionID.objects.get(hash_key=hash_key).class_id)
+        six_sessions_data["timestamp"].append(hash_key.class_id)
         six_sessions_data["questions"].append(n_q)
         six_sessions_data["board"].append(n_b)
         six_sessions_data["problem"].append(n_p)

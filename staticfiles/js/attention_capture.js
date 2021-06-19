@@ -13,6 +13,9 @@
   let frame_list = [];
 
   let counter = 0;
+  let class_id = null;
+
+  let start_time = 0;
 
   function startup() {
     video = document.getElementById('video');
@@ -48,6 +51,8 @@
 
     startbutton.addEventListener('click', function(ev){
       alert("Attention Tracking has begun. Click stop to terminate it.")
+      start_time = Date.now();
+      console.log(start_time);
       takepicture();
       stop = false;
       ev.preventDefault();
@@ -67,6 +72,10 @@
 
   function takepicture() {
     let context = canvas.getContext('2d');
+    class_id = document.getElementById('class_id').value;
+    let time_now = Date.now();
+    let time_elapsed = (time_now - start_time) / 1000;
+    console.log(`Time elapsed: ${time_elapsed} seconds`)
     if (width && height) {
       canvas.width = width;
       canvas.height = height;
@@ -81,6 +90,8 @@
               'height' : height,
               'width' : width,
               'counter': counter,
+              'class_id': class_id,
+              'time_elapsed': time_elapsed
           },
           complete: function () {
             if (stop){

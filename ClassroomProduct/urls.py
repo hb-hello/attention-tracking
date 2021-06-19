@@ -30,13 +30,13 @@ urlpatterns = [
 
 
     # url(r'^sessionanalytics/(?P<parameter1>\w+)/', get_session_analytics, name="sessionanalytics"),
-    url(r'^sessionanalytics/', get_session_analytics, name="sessionanalytics"),
+    url(r'^sessionanalytics', get_session_analytics, name="sessionanalytics"),
     url(r'^sessionlist/', get_list_session, name="sessionlist"),
     url(r'^graph/chart1/', chart1,name="chart1"),
     url(r'^graph/chart2/',chart2,name="chart2"),
     url(r'^graph/chart3/', chart3,name="chart3"),
     url(r'^graph/chart4/', chart4,name="chart4"),
-    url(r'^graph/attention-chart/<str:attention_id>', attention_chart,name="attention_chart"),
+    url(r'^graph/attention-chart/', attention_chart,name="attention_chart"),
 
     url(r"^attendance/", get_attendance, name="attendance"),
     url(r'^captureattendance/', capture_attendance,name="captureattendance"),

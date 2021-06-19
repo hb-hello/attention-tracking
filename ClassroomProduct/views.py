@@ -1,6 +1,7 @@
 from ClassApp import forms
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404
 from ClassApp.models import *
 # from qr_code.qrcode.utils import QRCodeOptions
 import urllib.parse
@@ -10,9 +11,12 @@ from datetime import datetime
 
 @login_required
 def home(request):
-    # request.session.pop('class_id')
-    # request.session.pop('start_time')
-    # request.session.modified=True
+    if request.session.get('class_id'):
+        request.session.pop('class_id')
+        request.session.modified=True
+    if request.session.get('start_time'):
+        request.session.pop('start_time')
+        request.session.modified=True
     return render(request, 'home.html')
 
 
@@ -53,7 +57,7 @@ def stream_session(request):
 
 
 def get_list_session(request):
-    sessions_list = ClassAttentionID.objects.filter(session_teacher=request.user)
+    sessions_list = ClassAttentionID.objects.filter(session_teacher=request.user).order_by('-time_stamp')[:20]
     return render(request, 'analytics/session_list.html', {'sessions_list': sessions_list})
 
 def get_attendance(request):
@@ -65,4 +69,20 @@ def get_attendance(request):
 #     return render(request, 'analytics/session_analytics.html', {"hk": hk})
 
 def get_session_analytics(request):
-    return render(request, 'analytics/session_analytics.html')
+    class_id = request.GET.get('id')
+    class_obj = get_object_or_404(ClassAttentionID, class_id=class_id)
+    attention_list = [float(obj.ov_attn) for obj in class_obj.classattention_set.all()]
+    total_time = max([float(obj.time_elapsed) for obj in class_obj.classattention_set.all()])
+    frame_count = len(attention_list)
+    average_attention = sum(attention_list) / frame_count
+    min_attention = min([i for i in attention_list if i > 0])
+    max_attention = max(attention_list)
+    context = {
+        'attention_id': class_id,
+        'frame_count': frame_count,
+        'average_attention': round(average_attention, 2),
+        'min_attention': round(min_attention, 2),
+        'max_attention': round(max_attention, 2),
+        'total_time': total_time
+    }
+    return render(request, 'analytics/session_analytics.html', context)

@@ -1,9 +1,9 @@
 {% load static  %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>List of Sessions</title>
+    <head>
+        <meta charset="UTF-8">
+        <title>List of Sessions</title>
         <link rel="stylesheet" href="{% static 'css/materialize.css' %}">
         <link rel="stylesheet" href="{% static 'css/materialize.min.css' %}">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -14,8 +14,36 @@
         </style>
     </head>
 <body>
+    <!--
     {% for session in sessions_list %}
         <a href='/sessionanalytics/{{ session.hash_key }}/'><h5>{{ session.class_id }} on {{ session.time_stamp|date }}, {{ session.time_stamp|time }}</h5></a>
     {% endfor %}
+    -->
+
+    <div class="section">
+        <div class="container">
+            <h5>List of Sessions</h5>
+            <table class="highlight">
+                <thead>
+                  <tr>
+                      <th>User</th>
+                      <th>Session ID</th>
+                      <th>Session Time</th>
+                  </tr>
+                </thead>
+            
+                <tbody>
+                {% for session in sessions_list %}
+                  <tr>
+                    <td>{{ session.session_teacher }}</td>
+                    <td><a href="/sessionanalytics?id={{ session.class_id }}">{{ session.class_id }}</a></td>
+                    <td>{{ session.time_stamp|date }}, {{ session.time_stamp|time }}</td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 </body>
 </html>

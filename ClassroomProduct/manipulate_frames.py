@@ -30,6 +30,8 @@ def capture_list(request):
     # width = int(request.POST.get('width'))
     # height = int(request.POST.get('height'))
     
+    class_id = request.POST.get('class_id')
+    time_elapsed = request.POST.get('time_elapsed')
 
     # temp1 = [frame[i:i + 3] for i in range(0, len(frame), 4)]
     # temp2 = [temp1[i:i + width] for i in range(0, len(temp1), width)]
@@ -40,7 +42,7 @@ def capture_list(request):
     # print("Sending frames to ML Model", len(np_frames))
     t2 = time.time()
     attention_thread = threading.Thread(
-            target=MakeAttention, kwargs=dict(frames=np_frames, frame_counter=frame_counter))
+            target=MakeAttention, kwargs=dict(frames=np_frames, frame_counter=frame_counter, class_id=class_id, time_elapsed=time_elapsed))
     attention_thread.start()
     # MakeAttention(np_frames)
     t3 = time.time()
