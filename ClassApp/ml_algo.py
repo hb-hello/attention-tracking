@@ -21,6 +21,20 @@ from scipy.stats import pearsonr
 
 # static attendance
 
+def get_prev_attention(class_id, frame_counter):
+    # get previous 2 frames
+    try:
+        class_obj = ClassAttentionID.objects.get(class_id)
+        prev_attention = [float(obj.gaze_attn) for obj in class_obj.classattention_set.order_by('-frame_counter')]
+        logging.debug(prev_attention)
+        if len(prev_attention) <= 1:
+            return None
+        elif len(prev_attention) >= 2:
+            return prev_attention[:2]
+    except Exception as e:
+        logging.debug(e)
+        return None
+
 # Create your views here.
 def MakeAttention(frames, frame_counter, class_id, time_elapsed):
     # frames = []  # list of frames each being a numpy array image
@@ -36,7 +50,12 @@ def MakeAttention(frames, frame_counter, class_id, time_elapsed):
     sleep_n, sleep_coordinates = getSleepNumber(frames)
     logging.debug("SLEEP ATTENTION % : "+ str(sleep_n*100))
 
-    ov_attn = ((1.8*gaze_attn)+(0.2*pose_attn))/2 - 0.1*sleep_n
+    prev_attn = get_prev_attention(class_id, frame_counter)
+
+    if prev_attn:
+        ov_attn = (0.5 * gaze_attn) + (0.5 * avg(prev_attn))
+    else:
+        ov_attn = gaze_attn
 
     # predictor_model = joblib.load('ClassApp\models\MLP_predictor.pkl')
     # ov_attn = predictor_model.predict([[gaze_attn, pose_attn, sleep_n]])[0]
@@ -47,8 +66,8 @@ def MakeAttention(frames, frame_counter, class_id, time_elapsed):
 
     class_obj = ClassAttentionID.objects.get(class_id=class_id)
 
-    image_x = frames[-1].shape[0]
-    image_y = frames[-1].shape[1]
+    # image_x = frames[-1].shape[0]
+    # image_y = frames[-1].shape[1]
 
     t_l = 0
     b_l = 0
